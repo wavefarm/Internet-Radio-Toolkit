@@ -3,8 +3,14 @@
 
 #include <FS.h>
 
-#include <LittleFS.h>
-#define TOOLFS LittleFS
+//#include <LittleFS.h>
+//#define TOOLFS LittleFS
+
+//#include <LITTLEFS.h>
+//#define TOOLFS LITTLEFS
+
+#include "../ToolkitLittleFS/ToolkitLittleFS.h"
+#define TOOLFS ToolkitLittleFS
 
 #include "ToolkitFiles.h"
 
