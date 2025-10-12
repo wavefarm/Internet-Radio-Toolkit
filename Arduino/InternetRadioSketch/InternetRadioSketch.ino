@@ -3,7 +3,7 @@
 // October/November 2024
 //
 
-// Tested with Arduino 1.8.19
+// Tested with Arduino 1.8.19 and 2.3.6
 // Esp32 v 1.0.6 ("ESP32 Dev Module")
 
 // config contains compile time options for RTOS
@@ -127,21 +127,23 @@ void pins_task(void *params)
 }
 #endif
 
+#define EXTRAHEAP 0
+
 void start_rtos_tasks()
 {
-  xTaskCreatePinnedToCore(server_task, "Server Task", 4096, NULL, 1, NULL, 0); // changed to processor 0 !! from 1
+  xTaskCreatePinnedToCore(server_task, "Server Task", 4096+EXTRAHEAP, NULL, 1, NULL, 0); // changed to processor 0 !! from 1
 
   if (stream_thing.run_not_wait) {
     if (stream_thing.listen_dont_encode) {
-      xTaskCreatePinnedToCore(listener_task, "Listener Task", 2048, NULL, 1+RTOS_HIPRIORITY_VLSI, NULL, 1);
+      xTaskCreatePinnedToCore(listener_task, "Listener Task", 2048+EXTRAHEAP, NULL, 1+RTOS_HIPRIORITY_VLSI, NULL, 1);
     } else {
-      xTaskCreatePinnedToCore(encoder_task, "Encoder Task", 2048, NULL, 1+RTOS_HIPRIORITY_VLSI, NULL, 1);
-      xTaskCreatePinnedToCore(icy_task, "Icy Reconnect Task", 4096, NULL, 1, NULL, 0); // changed to processor 0 !! from 1
+      xTaskCreatePinnedToCore(encoder_task, "Encoder Task", 2048+EXTRAHEAP, NULL, 1+RTOS_HIPRIORITY_VLSI, NULL, 1);
+      xTaskCreatePinnedToCore(icy_task, "Icy Reconnect Task", 4096+EXTRAHEAP, NULL, 1, NULL, 0); // changed to processor 0 !! from 1
     }
   }
 
 #if USE_PIN_CONTROLS
-  xTaskCreatePinnedToCore(pins_task, "Hardware Pins Task", 4096, NULL, 1, NULL, 0);
+  xTaskCreatePinnedToCore(pins_task, "Hardware Pins Task", 4096+EXTRAHEAP, NULL, 1, NULL, 0);
 #endif
 
   Serial.println("Toolkit started up with RTOS tasks");
