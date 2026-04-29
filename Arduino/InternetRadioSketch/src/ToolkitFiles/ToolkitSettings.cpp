@@ -84,11 +84,13 @@ const char* SettingItem::parseSetting(const char *text,
     *outValue = NULL;
 
     text = clearWhitespace(text);   // will point to name or '\n' or '\0'
+    // clears ' \t=' from head of text
     if (isTerminator(text)) {
         return text;   // there was no settings name in the text
     }
     const char *end = findEndOfString(text);
-    // name starts at text and ends and end
+        // finds ' \t\0\n=' at end of <name>
+    // name starts at text and ends at end
     uint16_t length = end - text;
     if (length > (ITEM_MAX_NAME_STRING-1)) {
         length = ITEM_MAX_NAME_STRING-1;
@@ -99,11 +101,13 @@ const char* SettingItem::parseSetting(const char *text,
     *outName = name;
 
     text = clearWhitespace(end); // may return end if there is no value
+        // clears ' \t=' at head of text
     if (isTerminator(text)) {
         return text;
     }
 
-    end = findEndOfString(text);
+    end = findEndOfValue(text);
+        // finds ' \t\0\n=' but allows internal ' ' (trims tailing spaces)
     length = end - text;
     if (length > (ITEM_MAX_VALUE_STRING-1)) {
         length = ITEM_MAX_VALUE_STRING-1;

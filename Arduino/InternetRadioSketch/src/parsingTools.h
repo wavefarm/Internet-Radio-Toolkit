@@ -62,7 +62,7 @@ inline const char *clearWhitespace(const char *text)
 // returns pointer to 1 character after the string
 inline const char *findEndOfString(const char *text)
 {
-    while(true) {
+    while (true) {
         switch (*text) {
             case '\0' :
             case '\t' :
@@ -72,6 +72,33 @@ inline const char *findEndOfString(const char *text)
                 return text;
                 break;
             default :
+                text++;
+                break;
+        }
+    }
+}
+
+inline const char *findEndOfValue(const char *text)
+{
+    const char *space = 0; // position of a terminating space, 0 for none
+    while (true) {
+        switch (*text) {
+            case '\0' :             // terminator characters
+            case '\t' :
+            case '\n' :
+                if (0 != space) {
+                    return space;
+                }
+                return text;
+                break;
+            case ' ' :              // space is internal or tail (trimmed)
+                if (0 == space) {
+                    space = text;
+                }
+                text++;
+                break;
+            default :               // characters to include in the value
+                space = 0;
                 text++;
                 break;
         }

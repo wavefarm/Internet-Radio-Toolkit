@@ -76,6 +76,7 @@ uint16_t ToolkitWiFi_Server::begin(uint16_t timeout_in_seconds)
         if (WiFi.status() != WL_CONNECTED) {
             result = result | WIFI_TIMEOUT_ON_STATION;
             Serial.println("\nWiFi failed to connect to local router!");
+            SettingItem::updateOrAdd("wifi_router_ip", "No Connection");
         } else {
              const char *ip = WiFi.localIP().toString().c_str();
              SettingItem::updateOrAdd("wifi_router_ip", ip);

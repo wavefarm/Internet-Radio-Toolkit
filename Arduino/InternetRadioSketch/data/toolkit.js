@@ -42,7 +42,8 @@ function setting(id, precision)
     } */else if (("INPUT"===elem.nodeName)&&("checkbox"===elem.type)) {
         dealWithCheckbox(elem);
     }
-    elem.value = elem.value.replace(/\s+/g, '');
+//    elem.value = elem.value.replace(/\s+/g, ''); // strips all space characters
+    elem.value = elem.value.trim(); // strips leading and trailing spaces
     sendToToolkit(id, elem.value);
 }
 
@@ -136,22 +137,16 @@ function receiveFromToolkit(packet)
 {
     let messages = packet.split("\n");
     for (let i = 0; i < messages.length; i++) {
-        let fields = messages[i].split(" ");
-        // we may receive the settings as <name> = <value>
-        // OR <name> <value>
+        // settings are <name> = <value>
         // for the password, value may not exist
+        let fields = messages[i].split("=");
         let value = "";
         if (fields[1]) {
-            if ('=' == fields[1]) {
-                if (fields[2]) {
-                    value = fields[2];
-                }
-            } else {
-                value = fields[1];
-            }
+            value = fields[1].trim();
         }
+
         let precision = getPrecision(fields[0]);
-        updateUI(fields[0],value,precision);
+        updateUI(fields[0].trim(),value,precision);
     }
 }
 
